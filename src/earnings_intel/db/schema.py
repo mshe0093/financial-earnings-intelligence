@@ -115,6 +115,53 @@ CREATE TABLE IF NOT EXISTS macro_indicators (
 );
 """
 
+_DDL_BACKTEST_RUNS = """
+CREATE TABLE IF NOT EXISTS backtest_runs (
+    run_id                VARCHAR PRIMARY KEY,
+    run_timestamp         TIMESTAMP DEFAULT current_timestamp,
+    benchmark             VARCHAR NOT NULL,
+    window_days           INTEGER NOT NULL,
+    total_trades          INTEGER NOT NULL,
+    winning_trades        INTEGER NOT NULL,
+    losing_trades         INTEGER NOT NULL,
+    hit_rate              FLOAT NOT NULL,
+    mean_return           FLOAT NOT NULL,
+    mean_abnormal_return  FLOAT NOT NULL,
+    annualized_return     FLOAT NOT NULL,
+    annualized_volatility FLOAT NOT NULL,
+    sharpe_ratio          FLOAT NOT NULL,
+    max_drawdown          FLOAT NOT NULL,
+    calmar_ratio          FLOAT NOT NULL
+);
+"""
+
+_DDL_BACKTEST_TRADES = """
+CREATE TABLE IF NOT EXISTS backtest_trades (
+    trade_id          VARCHAR PRIMARY KEY,
+    run_id            VARCHAR NOT NULL REFERENCES backtest_runs(run_id),
+    filing_id         VARCHAR NOT NULL REFERENCES filings_metadata(filing_id),
+    ticker            VARCHAR NOT NULL,
+    filing_date       DATE NOT NULL,
+    signal            VARCHAR NOT NULL,
+    signal_reason     VARCHAR,
+    entry_date        DATE NOT NULL,
+    exit_date         DATE NOT NULL,
+    holding_days      INTEGER NOT NULL,
+    stock_return      FLOAT NOT NULL,
+    benchmark_return  FLOAT NOT NULL,
+    strategy_return   FLOAT NOT NULL,
+    abnormal_return   FLOAT NOT NULL
+);
+"""
+
+_DDL_BACKTEST_INDEXES = """
+CREATE INDEX IF NOT EXISTS idx_backtest_trades_run
+    ON backtest_trades (run_id);
+
+CREATE INDEX IF NOT EXISTS idx_backtest_trades_ticker
+    ON backtest_trades (ticker);
+"""
+
 # Schema version tracking table
 _DDL_SCHEMA_VERSION = """
 CREATE TABLE IF NOT EXISTS _schema_version (
@@ -123,7 +170,7 @@ CREATE TABLE IF NOT EXISTS _schema_version (
 );
 """
 
-# Ordered list — dependencies first (filings before signals).
+# Ordered list — dependencies first (filings before signals and backtest trades).
 _ALL_DDL: list[str] = [
     _DDL_SCHEMA_VERSION,
     _DDL_FILINGS_METADATA,
@@ -133,6 +180,9 @@ _ALL_DDL: list[str] = [
     _DDL_PRICE_SERIES,
     _DDL_PRICE_INDEXES,
     _DDL_MACRO_INDICATORS,
+    _DDL_BACKTEST_RUNS,
+    _DDL_BACKTEST_TRADES,
+    _DDL_BACKTEST_INDEXES,
 ]
 
 _EXPECTED_TABLES: set[str] = {
@@ -140,6 +190,8 @@ _EXPECTED_TABLES: set[str] = {
     "extracted_signals",
     "price_series",
     "macro_indicators",
+    "backtest_runs",
+    "backtest_trades",
     "_schema_version",
 }
 
