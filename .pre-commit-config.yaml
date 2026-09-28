@@ -32,6 +32,7 @@ repos:
         exclude: |
           (?x)^(
             \.env\.example|
+            PROJECT_PLAN\.md|
             uv\.lock
           )$
 

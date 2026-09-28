@@ -181,8 +181,8 @@ asyncio_mode = "auto"
 # NEVER commit the .env file.
 
 SEC_USER_AGENT="EarningsApp user@domain.com"
-GEMINI_API_KEY="your_api_key_here"
-FRED_API_KEY="your_api_key_here"
+GEMINI_API_KEY="your_api_key_here"  # pragma: allowlist secret
+FRED_API_KEY="your_api_key_here"  # pragma: allowlist secret
 
 # Optional overrides
 DUCKDB_PATH="data/earnings.duckdb"
