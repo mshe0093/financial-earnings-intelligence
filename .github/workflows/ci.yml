@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python 3.11
+        run: uv python install 3.11
+
+      - name: Run Ruff Lint Check
+        run: uv run ruff check .
+
+      - name: Run Ruff Format Check
+        run: uv run ruff format --check .
+
+  test:
+    name: Unit & Integration Tests (Coverage >= 80%)
+    runs-on: ubuntu-latest
+    env:
+      SEC_USER_AGENT: "CI-Tester test@example.com"
+      GEMINI_API_KEY: "ci-dummy-key"
+      FRED_API_KEY: "ci-dummy-key"
+      DUCKDB_PATH: ":memory:"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python 3.11
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        run: uv sync --frozen --group dev
+
+      - name: Run Pytest with Coverage
+        run: uv run pytest --cov=earnings_intel --cov-report=term-missing --cov-fail-under=80
+
+  security:
+    name: Security & Credential Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python 3.11
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        run: uv sync --frozen --group dev
+
+      - name: Run detect-secrets audit
+        run: uv run pre-commit run detect-secrets --all-files

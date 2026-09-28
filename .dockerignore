@@ -1,0 +1,48 @@
+# ============================================================
+# Docker Build Exclusion Rules
+# Keeps image minimal and prevents accidental credential leakage
+# ============================================================
+
+# Version control & workflows
+.git/
+.gitignore
+.gitattributes
+.github/
+.pre-commit-config.yaml
+.secrets.baseline
+
+# Python caches and virtualenvs
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+
+# Environment files & credentials (CRITICAL: ZERO-LEAK)
+.env
+.env.*
+*.env
+
+# Local data & databases
+data/
+*.duckdb
+*.duckdb.wal
+logs/
+
+# Testing & quality caches
+tests/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.ruff_cache/
+.mypy_cache/
+
+# IDE & OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+notebooks/

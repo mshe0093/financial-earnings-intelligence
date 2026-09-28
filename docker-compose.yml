@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: earnings-intel-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - SEC_USER_AGENT=${SEC_USER_AGENT:-EarningsIntel user@example.com}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-demo_key}
+      - FRED_API_KEY=${FRED_API_KEY:-demo_key}
+      - DUCKDB_PATH=/app/data/earnings.duckdb
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - EDGAR_RATE_LIMIT_RPS=${EDGAR_RATE_LIMIT_RPS:-8}
+    volumes:
+      - duckdb_data:/app/data
+    command: ["--host", "0.0.0.0", "--port", "8000", "--demo"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  duckdb_data:
+    driver: local

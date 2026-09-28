@@ -154,25 +154,18 @@ def list_filings(
     total = conn.execute(count_query, params).fetchone()[0]
 
     # Data query left joining extracted_signals for quick summary
-    data_query = f"""
-        SELECT
-            f.filing_id,
-            f.cik,
-            f.ticker,
-            f.company_name,
-            f.form_type,
-            f.filing_date,
-            f.period_of_report,
-            s.signal_id IS NOT NULL AS has_signals,
-            s.management_sentiment,
-            s.revenue_guidance,
-            s.guidance_confidence
-        FROM filings_metadata f
-        LEFT JOIN extracted_signals s ON f.filing_id = s.filing_id
-        {where_sql}
-        ORDER BY f.filing_date DESC
-        LIMIT ? OFFSET ?
-    """
+    data_query = (
+        "SELECT "  # noqa: S608
+        "f.filing_id, f.cik, f.ticker, f.company_name, f.form_type, "
+        "f.filing_date, f.period_of_report, "
+        "s.signal_id IS NOT NULL AS has_signals, "
+        "s.management_sentiment, s.revenue_guidance, s.guidance_confidence "
+        "FROM filings_metadata f "
+        "LEFT JOIN extracted_signals s ON f.filing_id = s.filing_id "
+        f"{where_sql} "
+        "ORDER BY f.filing_date DESC "
+        "LIMIT ? OFFSET ?"
+    )
     data_params = [*params, limit, offset]
     rows = conn.execute(data_query, data_params).fetchall()
 
