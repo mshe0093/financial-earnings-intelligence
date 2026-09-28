@@ -1,8 +1,8 @@
 # PROJECT PLAN — LLM-Powered Financial Earnings Intelligence System
 
-> **Version:** 1.0.0  
-> **Status:** Draft  
-> **Last Updated:** 2026-09-28  
+> **Version:** 1.0.0
+> **Status:** Draft
+> **Last Updated:** 2026-09-28
 
 ---
 
@@ -474,6 +474,7 @@ from pydantic import BaseModel, Field
 
 class GuidanceDirection(str, Enum):
     """Direction of management guidance revision."""
+
     RAISE = "raise"
     MAINTAIN = "maintain"
     LOWER = "lower"
@@ -507,7 +508,7 @@ class EarningsSignals(BaseModel):
     )
     revenue_guidance_detail: str = Field(
         default="",
-        description="Verbatim or paraphrased quote supporting the revenue guidance direction."
+        description="Verbatim or paraphrased quote supporting the revenue guidance direction.",
     )
 
     # ── Metric 3–4: EPS Guidance ──
@@ -516,7 +517,7 @@ class EarningsSignals(BaseModel):
     )
     eps_guidance_detail: str = Field(
         default="",
-        description="Verbatim or paraphrased quote supporting the EPS guidance direction."
+        description="Verbatim or paraphrased quote supporting the EPS guidance direction.",
     )
 
     # ── Metric 5: Margin Outlook ──
@@ -525,38 +526,38 @@ class EarningsSignals(BaseModel):
     )
 
     # ── Metric 6: CapEx Direction ──
-    capex_direction: CapexDirection = Field(
-        description="Direction of capital expenditure plans."
-    )
+    capex_direction: CapexDirection = Field(description="Direction of capital expenditure plans.")
 
     # ── Metric 7: Management Sentiment ──
     management_sentiment: float = Field(
-        ge=-1.0, le=1.0,
-        description="Composite sentiment score from -1.0 (very negative) to 1.0 (very positive)."
+        ge=-1.0,
+        le=1.0,
+        description="Composite sentiment score from -1.0 (very negative) to 1.0 (very positive).",
     )
 
     # ── Metric 8: Forward-Looking Language Ratio ──
     forward_language_ratio: float = Field(
-        ge=0.0, le=1.0,
-        description="Ratio of forward-looking statements to total statements (0.0–1.0)."
+        ge=0.0,
+        le=1.0,
+        description="Ratio of forward-looking statements to total statements (0.0–1.0).",
     )
 
     # ── Metric 9: Risk Factor Count ──
     risk_factor_count: int = Field(
-        ge=0,
-        description="Number of distinct risk factors or headwinds mentioned in MD&A."
+        ge=0, description="Number of distinct risk factors or headwinds mentioned in MD&A."
     )
 
     # ── Metric 10: Key Risk Topics ──
     key_risk_topics: list[str] = Field(
         default_factory=list,
-        description="Top risk themes mentioned (e.g., 'supply chain', 'regulatory', 'FX exposure')."
+        description="Top risk themes mentioned (e.g., 'supply chain', 'regulatory', 'FX exposure').",
     )
 
     # ── Metric 11: Guidance Confidence ──
     guidance_confidence: float = Field(
-        ge=0.0, le=1.0,
-        description="Model's self-assessed confidence in the accuracy of extracted guidance (0.0–1.0)."
+        ge=0.0,
+        le=1.0,
+        description="Model's self-assessed confidence in the accuracy of extracted guidance (0.0–1.0).",
     )
 
     # ── Metric 12: Restructuring Signals ──
@@ -631,13 +632,14 @@ def compute_pead(
 ```python
 class PEADResult(BaseModel):
     """Result of post-earnings announcement drift computation."""
+
     filing_id: str
     ticker: str
     filing_date: date
     window_days: int
-    raw_return: float        # Total return over window
+    raw_return: float  # Total return over window
     benchmark_return: float  # SPY return over same window
-    abnormal_return: float   # raw_return - benchmark_return
+    abnormal_return: float  # raw_return - benchmark_return
     car_series: list[float]  # Daily cumulative abnormal returns
 ```
 
@@ -656,10 +658,7 @@ def compute_sharpe_ratio(
     excess_returns = returns - (risk_free_rate / annualization_factor)
     if excess_returns.std() == 0:
         return 0.0
-    return float(
-        (excess_returns.mean() / excess_returns.std())
-        * (annualization_factor ** 0.5)
-    )
+    return float((excess_returns.mean() / excess_returns.std()) * (annualization_factor**0.5))
 ```
 
 ### 7.3 Backtesting Strategy
