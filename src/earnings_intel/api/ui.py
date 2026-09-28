@@ -588,7 +588,7 @@ def create_ui(conn: duckdb.DuckDBPyConnection | None = None) -> gr.Blocks:
                 def on_load_signals(ticker: str) -> tuple[go.Figure, pd.DataFrame]:
                     clean_tick = ticker.strip().upper()
 
-                    # Synthetic prices & sentiment for seamless visual demo
+                    # Synthetic prices & sentiment for visual demo
                     base = date(2023, 1, 1)
                     p_dates = [base + timedelta(days=i) for i in range(180)]
                     p_vals = [
@@ -746,7 +746,7 @@ def create_ui(conn: duckdb.DuckDBPyConnection | None = None) -> gr.Blocks:
         gr.Markdown(
             """
             ---
-            *Built with DuckDB, FastAPI, Gradio, Plotly, and Gemini. Zero-leak credentials.*
+            *Built with DuckDB, FastAPI, Gradio, Plotly, and Gemini.*
             """
         )
 
